@@ -61,6 +61,10 @@ func (m *mockConfig) GetMaxTokens() int {
 	return 0
 }
 
+func (m *mockConfig) GetStopSequences() []string {
+	return []string{"", "", "", ""}
+}
+
 func (m *mockConfig) GetEndpointName() string {
 	return ""
 }
@@ -73,6 +77,10 @@ func (m *mockConfig) GetProviderId() string {
 }
 
 func (m *mockConfig) GetProviderRegion() string {
+	return ""
+}
+
+func (m *mockConfig) GetAzureAPIType() string {
 	return ""
 }
 

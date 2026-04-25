@@ -32,7 +32,9 @@ var (
 	topP           float32
 	topK           int32
 	maxTokens      int
+	stopSequences  []string
 	organizationId string
+	azureAPIType   string
 )
 
 var configAI ai.AIConfiguration

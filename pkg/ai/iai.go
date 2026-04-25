@@ -27,6 +27,7 @@ var (
 		&NoOpAIClient{},
 		&CohereClient{},
 		&AmazonBedRockClient{},
+		&AmazonBedrockConverseClient{},
 		&SageMakerAIClient{},
 		&GoogleGenAIClient{},
 		&HuggingfaceClient{},
@@ -43,6 +44,7 @@ var (
 		azureAIClientName,
 		cohereAIClientName,
 		amazonbedrockAIClientName,
+		amazonBedrockConverseClientName,
 		amazonsagemakerAIClientName,
 		googleAIClientName,
 		noopAIClientName,
@@ -85,9 +87,11 @@ type IAIConfig interface {
 	GetTopP() float32
 	GetTopK() int32
 	GetMaxTokens() int
+	GetStopSequences() []string
 	GetProviderId() string
 	GetCompartmentId() string
 	GetOrganizationId() string
+	GetAzureAPIType() string
 	GetCustomHeaders() []http.Header
 }
 
@@ -122,7 +126,9 @@ type AIProvider struct {
 	TopP           float32       `mapstructure:"topp" yaml:"topp,omitempty"`
 	TopK           int32         `mapstructure:"topk" yaml:"topk,omitempty"`
 	MaxTokens      int           `mapstructure:"maxtokens" yaml:"maxtokens,omitempty"`
+	StopSequences  []string      `mapstructure:"stopsequences" yaml:"stopsequences,omitempty"`
 	OrganizationId string        `mapstructure:"organizationid" yaml:"organizationid,omitempty"`
+	AzureAPIType   string        `mapstructure:"azureapitype" yaml:"azureapitype,omitempty"`
 	CustomHeaders  []http.Header `mapstructure:"customHeaders"`
 }
 
@@ -148,6 +154,10 @@ func (p *AIProvider) GetTopK() int32 {
 
 func (p *AIProvider) GetMaxTokens() int {
 	return p.MaxTokens
+}
+
+func (p *AIProvider) GetStopSequences() []string {
+	return p.StopSequences
 }
 
 func (p *AIProvider) GetPassword() string {
@@ -181,11 +191,15 @@ func (p *AIProvider) GetOrganizationId() string {
 	return p.OrganizationId
 }
 
+func (p *AIProvider) GetAzureAPIType() string {
+	return p.AzureAPIType
+}
+
 func (p *AIProvider) GetCustomHeaders() []http.Header {
 	return p.CustomHeaders
 }
 
-var passwordlessProviders = []string{"localai", "ollama", "amazonsagemaker", "amazonbedrock", "googlevertexai", "oci", "customrest"}
+var passwordlessProviders = []string{"localai", "ollama", "amazonsagemaker", "amazonbedrock", "amazonbedrockconverse", "googlevertexai", "oci", "customrest"}
 
 func NeedPassword(backend string) bool {
 	for _, b := range passwordlessProviders {
